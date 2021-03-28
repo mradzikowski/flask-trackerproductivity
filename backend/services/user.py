@@ -33,7 +33,7 @@ def get_user(data_json):
             return {"status": "success", "user": registered_user}
         else:
             return {"status": "fail",
-                    "message": f"User {data_json['username']} has not been registered yet."}
+                    "message": f"User - {data_json['username']} - has not been registered yet."}
 
 
 def is_registered(username):
@@ -56,3 +56,20 @@ def is_email_registered(email):
             return True
     except ValueError as e:
         return {"success": False, "message": "User with provided email not found."}
+
+
+def delete_user(data_json):
+    if not data_json:
+        return {"status": "fail", "message": "No data provided."}
+    else:
+        try:
+            if is_registered(data_json['username']):
+                user_to_delete = User.query.get(data_json['username'])
+                db.session.delete(user_to_delete)
+                db.session.commit()
+                return {"status": "success", "message": "Successfully deleted account"}
+            else:
+                return {"status": "fail", "message": "There is no such a user with this username"}
+
+        except ValueError as e:
+            return {"status": "fail", "message": "Error while deleting the object"}
