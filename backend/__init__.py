@@ -1,5 +1,5 @@
 from flask import Flask, request
-from .extensions import db
+from .extensions import db, ma
 import os
 from .models.task import Task
 
@@ -11,16 +11,19 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     register_extensions(app)
+    register_blueprints(app)
 
     from .models.task import Task
     from .models.user import User
-
-    @app.route('/')
-    def index():
-        return {"Hello": "World"}
 
     return app
 
 
 def register_extensions(app):
-    db.init_app()
+    db.init_app(app)
+    ma.init_app(app)
+
+
+def register_blueprints(app):
+    from .routes import bp
+    app.register_blueprint(bp)
