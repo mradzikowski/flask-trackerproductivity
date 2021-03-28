@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Add user
+{% endblock %}
+
+{% block body %}
+    <h1>Add user</h1>
+    <form action="{{ url_for('routes.create_user') }}" method="POST">
+        <div>
+        <h2>Add username</h2>
+        <label for="username">Enter username</label>
+        <input type="text" name="username" id="username">
+
+        <h2>Add email</h2>
+        <label for="email">Enter email</label>
+        <input type="text" name="email" id="email">
+        </div>
+        <button>Register</button>
+
+    </form>
+{% endblock %}
