@@ -10,11 +10,10 @@ class Task(db.Model):
     task_name = db.Column(db.String, nullable=False)
     description = db.Column(db.String)
     is_active = db.Column(db.Boolean, default=True)
-    date_created = db.Column(db.DateTime, nullable=False,
+    date_created = db.Column(db.DateTime,
                              default=datetime.utcnow)
 
-    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'),
-                        nullable=False)
+    username = db.Column(db.String, db.ForeignKey('users.username'), nullable=False)
 
     def __repr__(self):
         return "<Task(task_id='%s', task_name='%s', description='%s', is_active='%s')>" \
