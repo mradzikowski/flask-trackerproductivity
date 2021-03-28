@@ -10,9 +10,11 @@ def index():
 
 @bp.route('/register', methods=['POST'])
 def create_user():
-    username = request.form['username']
-    email = request.form['email']
-    print(f"DATA:, {username}, {email}")
-    data_json = {"username": username, "email": email}
-    body = user_services.create_user(data_json)
-    return jsonify(body)
+    try:
+        data_json = request.json
+        body = user_services.create_user(data_json)
+        return jsonify(body)
+    except ValueError as e:
+        return e
+
+
