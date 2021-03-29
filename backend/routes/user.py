@@ -28,9 +28,19 @@ def delete_user():
     try:
         data_json = request.json
         body, status = user_services.delete_user(data_json)
-        return jsonify(body)
+        return jsonify(body), status
     except ValueError as e:
         return {"status": "fail", "message": e}
+
+
+@bp.route('/user/tasks', methods=['GET'])
+def get_all_tasks_for_user():
+    try:
+        data_json = request.json
+        body, status = user_services.get_all_tasks_for_user(data_json)
+        return jsonify(body), status
+    except ValueError as e:
+        return {"status": "fail", "message": "Error while getting tasks for user"}
 
 
 
