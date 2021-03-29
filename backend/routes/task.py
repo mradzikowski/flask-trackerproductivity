@@ -12,3 +12,12 @@ def create_task():
     except ValueError as e:
         return {"status": "fail", "message": "Error while creating object."}
 
+
+@bp.route('/task', methods=['GET'])
+def get_task():
+    try:
+        data_json = request.json
+        body, status = task_service.get_task(data_json)
+        return jsonify(body), status
+    except ValueError as e:
+        return {"status": "fail", "message": "Error while retrieving task from database."}
