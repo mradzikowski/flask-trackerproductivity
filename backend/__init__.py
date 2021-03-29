@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask
 from .extensions import db, ma
 import os
 from .models.task import Task
