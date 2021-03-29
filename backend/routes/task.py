@@ -21,3 +21,14 @@ def get_task():
         return jsonify(body), status
     except ValueError as e:
         return {"status": "fail", "message": "Error while retrieving task from database."}
+
+
+@bp.route('/task', methods=['DELETE'])
+def delete_task():
+    try:
+        data_json = request.json
+        body, status = task_service.delete_task(data_json)
+        return jsonify(body), status
+    except ValueError as e:
+        return {"status": "fail",
+                "message": "Error while deleting task object from database."}
