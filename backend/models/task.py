@@ -21,11 +21,12 @@ class Task(db.Model):
 
 
 class TaskSchema(Schema):
-    id = fields.Integer(dump_only=True)
+    task_id = fields.Integer()
     task_name = fields.String()
     description = fields.String()
     is_active = fields.Boolean()
     date_created = fields.DateTime(dump_only=True)
+    username = fields.String()
 
 
 task_schema = TaskSchema()
