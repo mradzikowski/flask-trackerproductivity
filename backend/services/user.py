@@ -5,15 +5,15 @@ from datetime import datetime
 
 def create_user(data_json):
     if not data_json:
-        return {"status": "failed", "message": "No data provided"}
+        return {"status": "failed", "message": "No data provided"}, 400
 
     if is_registered(data_json['username']):
         return {"status": "fail",
-                "message": "Username has been already taken"}
+                "message": "Username has been already taken"}, 400
 
     if is_email_registered(data_json['email']):
         return {"status": "fail",
-                "message": "Email is used in this service."}
+                "message": "Email is used in this service."}, 400
 
     data = user_schema.load(data_json)
     new_user = User(**data)
@@ -21,16 +21,16 @@ def create_user(data_json):
     db.session.add(new_user)
     db.session.commit()
 
-    return {"status": "success", "data": user_schema.dump(new_user)}
+    return {"status": "success", "data": user_schema.dump(new_user)}, 201
 
 
 def get_user(data_json):
     if not data_json:
-        return {"status": "fail", "message": "No data provided."}
+        return {"status": "fail", "message": "No data provided."}, 400
     else:
         if is_registered(data_json['username']):
             registered_user = user_schema.dump(data_json)
-            return {"status": "success", "user": registered_user}
+            return {"status": "success", "user": registered_user}, 200
         else:
             return {"status": "fail",
                     "message": f"User - {data_json['username']} - has not been registered yet."}
@@ -60,16 +60,16 @@ def is_email_registered(email):
 
 def delete_user(data_json):
     if not data_json:
-        return {"status": "fail", "message": "No data provided."}
+        return {"status": "fail", "message": "No data provided."}, 400
     else:
         try:
             if is_registered(data_json['username']):
                 user_to_delete = User.query.get(data_json['username'])
                 db.session.delete(user_to_delete)
                 db.session.commit()
-                return {"status": "success", "message": "Successfully deleted account"}
+                return {"status": "success", "message": "Successfully deleted account"}, 200
             else:
-                return {"status": "fail", "message": "There is no such a user with this username"}
+                return {"status": "fail", "message": "There is no such a user with this username"}, 400
 
         except ValueError as e:
-            return {"status": "fail", "message": "Error while deleting the object"}
+            return {"status": "fail", "message": "Error while deleting the object"}, 400
