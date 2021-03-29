@@ -1,5 +1,5 @@
 from backend.extensions import db
-from .task import Task
+from .task import Task, TaskSchema
 from marshmallow import Schema, fields
 from datetime import date
 
@@ -22,6 +22,7 @@ class UserSchema(Schema):
     username = fields.String()
     email = fields.String()
     registered = fields.DateTime(dump_only=True)
+    tasks = fields.List(fields.Nested(TaskSchema))
 
 
 user_schema = UserSchema()
