@@ -35,7 +35,7 @@ def create_task(data_json):
         return_json = task_schema.dump(data_json)
 
         return {"status": "success", "message": return_json}, 201
-    except ValueError as e:
+    except KeyError as e:
         return {"status": "fail", "message": "Error while creating object"}
 
 
@@ -53,6 +53,26 @@ def get_task(data_json):
         else:
             return {"status": "fail",
                     "message": f"Task - {data_json['task_id']} - data has not got specified task_id"}, 400
+
+
+def delete_task(data_json):
+    if not data_json:
+        return {"status": "fail", "message": "No data provided."}, 400
+    else:
+        try:
+            if data_json['task_id']:
+                found_task = Task.query.get(data_json['task_id'])
+                if found_task is not None:
+                    db.session.delete(found_task)
+                    db.session.commit()
+                    return {"status": "success", "task": task_schema.dump(found_task),
+                            "message": "Tak has been deleted."}, 200
+                else:
+                    return {"status": "fail", "message": "No registered task to delete."}, 400
+            else:
+                return {"status": "fail", "message": "There is no identifier."}
+        except KeyError as e:
+            return {"status": "fail", "message": "Error while deleting and object"}, 400
 
 
 
