@@ -39,3 +39,21 @@ def create_task(data_json):
         return {"status": "fail", "message": "Error while creating object"}
 
 
+def get_task(data_json):
+    if not data_json:
+        return {"status": "fail", "message": "No data provided."}, 400
+    else:
+        if data_json['task_id']:
+            found_task = Task.query.get(data_json['task_id'])
+            if found_task:
+                registered_task = task_schema.dump(found_task)
+                return {"status": "success", "task": registered_task}, 200
+            else:
+                return {"status": "fail", "message": "Task has not been registered yet."}, 400
+        else:
+            return {"status": "fail",
+                    "message": f"Task - {data_json['task_id']} - data has not got specified task_id"}, 400
+
+
+
+
