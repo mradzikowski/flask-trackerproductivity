@@ -28,12 +28,14 @@ def get_user(data_json):
     if not data_json:
         return {"status": "fail", "message": "No data provided."}, 400
     else:
-        if is_registered(data_json['username']):
-            registered_user = user_schema.dump(data_json)
-            return {"status": "success", "user": registered_user}, 200
-        else:
-            return {"status": "fail",
-                    "message": f"User - {data_json['username']} - has not been registered yet."}
+        if data_json['username']:
+            found_user = User.query.get(data_json['username'])
+            if found_user is not None:
+                registered_user = user_schema.dump(found_user)
+                return {"status": "success", "user": registered_user}, 200
+            else:
+                return {"status": "fail",
+                        "message": f"User - {data_json['username']} - has not been registered yet."}
 
 
 def is_registered(username):
@@ -70,6 +72,5 @@ def delete_user(data_json):
                 return {"status": "success", "message": "Successfully deleted account"}, 200
             else:
                 return {"status": "fail", "message": "There is no such a user with this username"}, 400
-
         except ValueError as e:
             return {"status": "fail", "message": "Error while deleting the object"}, 400
