@@ -53,4 +53,12 @@ def get_all_active_tasks_for_user():
         return {"status": "fail", "message": "Error while getting active tasks for user"}
 
 
+@bp.route('/user/tasks/productivity', methods=['GET'])
+def get_productivity_for_user():
+    try:
+        data_json = request.json
+        body, status = user_services.get_all_tasks_and_calculate_productivity(data_json)
+        return jsonify(body), status
+    except ValueError as e:
+        return {"status": "fail", "message": "Error while getting productive hours"}
 
