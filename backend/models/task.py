@@ -12,6 +12,7 @@ class Task(db.Model):
     is_active = db.Column(db.Boolean, default=True)
     date_created = db.Column(db.DateTime,
                              default=datetime.utcnow)
+    duration = db.Column(db.Float, default=0.0)
 
     username = db.Column(db.String, db.ForeignKey('users.username'), nullable=False)
 
@@ -26,6 +27,7 @@ class TaskSchema(Schema):
     description = fields.String()
     is_active = fields.Boolean()
     date_created = fields.DateTime(dump_only=True)
+    duration = fields.Float()
     username = fields.String()
 
 
