@@ -81,17 +81,20 @@ def get_all_tasks_for_user(data_json):
         return {"status": "fail", "message": "No data provided."}, 400
     else:
         try:
-            if is_registered(data_json['username']):
-                found_user = User.query.get(data_json['username'])
-                if found_user is not None:
-                    registered_user = user_schema.dump(found_user)
-                    if registered_user["tasks"]:
-                        return {"status": "success", "message": registered_user["tasks"]}, 200
-                    else:
-                        return {"status": "fail", "message": "No tasks attached to this user."}, 400
+            if data_json['username']:
+                if is_registered(data_json['username']):
+                    found_user = User.query.get(data_json['username'])
+                    if found_user is not None:
+                        registered_user = user_schema.dump(found_user)
+                        if registered_user["tasks"]:
+                            return {"status": "success", "message": registered_user["tasks"]}, 200
+                        else:
+                            return {"status": "fail", "message": "No tasks attached to this user."}, 400
+                else:
+                    return {"status": "fail",
+                            "message": f"User - {data_json['username']} - has not been registered yet."}, 400
             else:
-                return {"status": "fail",
-                        "message": f"User - {data_json['username']} - has not been registered yet."}, 400
+                return {"status": "fail", "message": "No data username provided."}
         except KeyError as e:
             return {"status": "fail",
                     "message": "Error while retrieving tasks for user"}
