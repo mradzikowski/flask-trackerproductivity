@@ -32,3 +32,14 @@ def delete_task():
     except ValueError as e:
         return {"status": "fail",
                 "message": "Error while deleting task object from database."}
+
+
+@bp.route('/task/finish', methods=['PATCH'])
+def finish_task():
+    try:
+        data_json = request.json
+        body, status = task_service.finish_task(data_json)
+        return jsonify(body), status
+    except ValueError as e:
+        return {"status": "fail",
+                "message": "Error while finishing the task"}
