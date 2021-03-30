@@ -25,6 +25,7 @@ def create_task(data_json):
         new_task = Task(**data)
         new_task.is_active = True
         new_task.date_created = datetime.now()
+        new_task.duration = 0
 
         user = get_user(data_json)
         user.tasks.append(new_task)
@@ -75,5 +76,29 @@ def delete_task(data_json):
             return {"status": "fail", "message": "Error while deleting and object"}, 400
 
 
+def finish_task(data_json):
+    if not data_json:
+        return {"status": "fail", "message": "No data provided."}, 400
+    else:
+        try:
+            if data_json['task_id']:
+                found_task = Task.query.get(data_json['task_id'])
+                if found_task is not None:
+                    if found_task.is_active:
+                        found_task.is_active = False
+                        duration = datetime.now() - found_task.date_created
+                        duration = divmod(duration.total_seconds(), 60)
+                        duration_rounded_two_places = round(duration[0] / 60, 2)
+                        found_task.duration = duration_rounded_two_places
+                        db.session.commit()
+                        return {"status": "success", "task": task_schema.dump(found_task)}, 200
+                    else:
+                        return {"status": "fail", "message": "Task has been already finished"}, 400
+                else:
+                    return {"status": "fail", "message": "No registered task to delete."}, 400
+            else:
+                return {"status": "fail", "message": "There is no identifier."}, 400
+        except KeyError as e:
+            return {"status": "fail", "message": "Error while deleting and object"}, 400
 
 
