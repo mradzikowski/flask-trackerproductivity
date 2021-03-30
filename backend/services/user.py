@@ -35,7 +35,8 @@ def get_user(data_json):
                 return {"status": "success", "user": registered_user}, 200
             else:
                 return {"status": "fail",
-                        "message": f"User - {data_json['username']} - has not been registered yet."}
+                        "message": f"User - {data_json['username']} - "
+                                   f"has not been registered yet."}
 
 
 def is_registered(username):
@@ -46,7 +47,8 @@ def is_registered(username):
         else:
             return True
     except ValueError as e:
-        return {"success": False, "message": "User with provided username not found."}
+        return {"success": False,
+                "message": "User with provided username not found."}
 
 
 def is_email_registered(email):
@@ -57,7 +59,8 @@ def is_email_registered(email):
         else:
             return True
     except ValueError as e:
-        return {"success": False, "message": "User with provided email not found."}
+        return {"success": False,
+                "message": "User with provided email not found."}
 
 
 def delete_user(data_json):
@@ -69,9 +72,11 @@ def delete_user(data_json):
                 user_to_delete = User.query.get(data_json['username'])
                 db.session.delete(user_to_delete)
                 db.session.commit()
-                return {"status": "success", "message": "Successfully deleted account"}, 200
+                return {"status": "success",
+                        "message": "Successfully deleted account"}, 200
             else:
-                return {"status": "fail", "message": "There is no such a user with this username"}, 400
+                return {"status": "fail",
+                        "message": "There is no such a user with this username"}, 400
         except ValueError as e:
             return {"status": "fail", "message": "Error while deleting the object"}, 400
 
@@ -87,14 +92,50 @@ def get_all_tasks_for_user(data_json):
                     if found_user is not None:
                         registered_user = user_schema.dump(found_user)
                         if registered_user["tasks"]:
-                            return {"status": "success", "message": registered_user["tasks"]}, 200
+                            return {"status": "success",
+                                    "message": registered_user["tasks"]}, 200
                         else:
-                            return {"status": "fail", "message": "No tasks attached to this user."}, 400
+                            return {"status": "fail",
+                                    "message": "No tasks attached to this user."}, 400
                 else:
                     return {"status": "fail",
-                            "message": f"User - {data_json['username']} - has not been registered yet."}, 400
+                            "message": f"User - {data_json['username']}"
+                                       f" - has not been registered yet."}, 400
             else:
                 return {"status": "fail", "message": "No data username provided."}
         except KeyError as e:
             return {"status": "fail",
                     "message": "Error while retrieving tasks for user"}
+
+
+def get_all_active_tasks_for_user(data_json):
+    if not data_json:
+        return {"status": "fail", "message": "No data provided."}, 400
+    else:
+        try:
+            if data_json['username']:
+                found_user = User.query.get(data_json['username'])
+                if found_user is not None:
+                    registered_user = user_schema.dump(found_user)
+                    if registered_user["tasks"]:
+                        active_tasks = []
+                        for task in registered_user["tasks"]:
+                            if task["is_active"]:
+                                active_tasks.append(task)
+                        if len(active_tasks) > 0:
+                            return {"status": "success", "message": active_tasks}, 200
+                        else:
+                            return {"message", active_tasks}, 200
+                    else:
+                        return {"status": "fail",
+                                "message": "No tasks attached to this user."}, 400
+                else:
+                    return {"status": "fail",
+                            "message": f"User - {data_json['username']}"
+                                       f" - has not been registered yet."}, 400
+            else:
+                return {"status": "fail",
+                        "message": "No data username provided."}, 400
+        except ValueError as e:
+            return {"status": "fail",
+                    "message": "Error while retrieving active tasks for user"}, 400
