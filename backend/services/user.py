@@ -123,9 +123,9 @@ def get_all_active_tasks_for_user(data_json):
                             if task["is_active"]:
                                 active_tasks.append(task)
                         if len(active_tasks) > 0:
-                            return {"status": "success", "message": active_tasks}, 200
+                            return {"status": "success", "tasks": active_tasks}, 200
                         else:
-                            return {"message", active_tasks}, 200
+                            return {"tasks", active_tasks}, 200
                     else:
                         return {"status": "fail",
                                 "message": "No tasks attached to this user."}, 400
@@ -139,3 +139,41 @@ def get_all_active_tasks_for_user(data_json):
         except ValueError as e:
             return {"status": "fail",
                     "message": "Error while retrieving active tasks for user"}, 400
+
+
+def get_all_tasks_and_calculate_productivity(data_json):
+    if not data_json:
+        return {"status": "fail", "message": "No data provided."}
+    else:
+        try:
+            if data_json['username']:
+                found_user = User.query.get(data_json['username'])
+                if found_user is not None:
+                    found_user_json = user_schema.dump(found_user)
+                    if found_user_json is not None:
+                        if found_user_json["tasks"]:
+                            finished_tasks = []
+                            sum_of_productive_time = 0
+                            for task in found_user_json["tasks"]:
+                                if not task["is_active"]:
+                                    finished_tasks.append(task)
+                                    sum_of_productive_time += task["duration"]
+                            return {"status": "success",
+                                    "productive_time": sum_of_productive_time,
+                                    "user": found_user_json}, 200
+                        else:
+                            return {"status": "success",
+                                    "message": "There are no finished tasks"}, 200
+                else:
+                    return {"status": "fail",
+                            "message": f"User - {data_json['username']}"
+                                       f" - has not been registered yet."}, 400
+            else:
+                return {"status": "fail",
+                        "message": "No data username provided."}, 400
+        except ValueError as e:
+            return {"status": "fail",
+                    "message": "Error while trying to retrieve productivity"}
+
+
+
