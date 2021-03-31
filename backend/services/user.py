@@ -5,14 +5,14 @@ from datetime import datetime
 
 def create_user(data_json):
     if not data_json:
-        return {"status": "failed", "message": "No data provided"}, 400
+        return {"success": False, "message": "No data provided"}, 400
 
     if is_registered(data_json['username']):
-        return {"status": "fail",
+        return {"success": False,
                 "message": "Username has been already taken"}, 400
 
     if is_email_registered(data_json['email']):
-        return {"status": "fail",
+        return {"success": False,
                 "message": "Email is used in this service."}, 400
 
     data = user_schema.load(data_json)
@@ -21,20 +21,20 @@ def create_user(data_json):
     db.session.add(new_user)
     db.session.commit()
 
-    return {"status": "success", "data": user_schema.dump(new_user)}, 201
+    return {"success": True, "data": user_schema.dump(new_user)}, 201
 
 
 def get_user(data_json):
     if not data_json:
-        return {"status": "fail", "message": "No data provided."}, 400
+        return {"success": False, "message": "No data provided."}, 400
     else:
         if data_json['username']:
             found_user = User.query.get(data_json['username'])
             if found_user is not None:
                 registered_user = user_schema.dump(found_user)
-                return {"status": "success", "user": registered_user}, 200
+                return {"success": True, "user": registered_user}, 200
             else:
-                return {"status": "fail",
+                return {"success": False,
                         "message": f"User - {data_json['username']} - "
                                    f"has not been registered yet."}
 
@@ -65,25 +65,25 @@ def is_email_registered(email):
 
 def delete_user(data_json):
     if not data_json:
-        return {"status": "fail", "message": "No data provided."}, 400
+        return {"success": False, "message": "No data provided."}, 400
     else:
         try:
             if is_registered(data_json['username']):
                 user_to_delete = User.query.get(data_json['username'])
                 db.session.delete(user_to_delete)
                 db.session.commit()
-                return {"status": "success",
+                return {"success": True,
                         "message": "Successfully deleted account"}, 200
             else:
-                return {"status": "fail",
+                return {"success": False,
                         "message": "There is no such a user with this username"}, 400
         except ValueError as e:
-            return {"status": "fail", "message": "Error while deleting the object"}, 400
+            return {"success": False, "message": "Error while deleting the object"}, 400
 
 
 def get_all_tasks_for_user(data_json):
     if not data_json:
-        return {"status": "fail", "message": "No data provided."}, 400
+        return {"success": False, "message": "No data provided."}, 400
     else:
         try:
             if data_json['username']:
@@ -92,25 +92,25 @@ def get_all_tasks_for_user(data_json):
                     if found_user is not None:
                         registered_user = user_schema.dump(found_user)
                         if registered_user["tasks"]:
-                            return {"status": "success",
+                            return {"success": True,
                                     "message": registered_user["tasks"]}, 200
                         else:
-                            return {"status": "fail",
+                            return {"success": False,
                                     "message": "No tasks attached to this user."}, 400
                 else:
-                    return {"status": "fail",
+                    return {"success": False,
                             "message": f"User - {data_json['username']}"
                                        f" - has not been registered yet."}, 400
             else:
-                return {"status": "fail", "message": "No data username provided."}
+                return {"success": False, "message": "No data username provided."}
         except KeyError as e:
-            return {"status": "fail",
+            return {"success": False,
                     "message": "Error while retrieving tasks for user"}
 
 
 def get_all_active_tasks_for_user(data_json):
     if not data_json:
-        return {"status": "fail", "message": "No data provided."}, 400
+        return {"success": False, "message": "No data provided."}, 400
     else:
         try:
             if data_json['username']:
@@ -123,27 +123,27 @@ def get_all_active_tasks_for_user(data_json):
                             if task["is_active"]:
                                 active_tasks.append(task)
                         if len(active_tasks) > 0:
-                            return {"status": "success", "tasks": active_tasks}, 200
+                            return {"success": True, "tasks": active_tasks}, 200
                         else:
-                            return {"tasks", active_tasks}, 200
+                            return {"success": True, "tasks": active_tasks}, 200
                     else:
-                        return {"status": "fail",
+                        return {"success": False,
                                 "message": "No tasks attached to this user."}, 400
                 else:
-                    return {"status": "fail",
+                    return {"success": False,
                             "message": f"User - {data_json['username']}"
                                        f" - has not been registered yet."}, 400
             else:
-                return {"status": "fail",
+                return {"success": False,
                         "message": "No data username provided."}, 400
         except ValueError as e:
-            return {"status": "fail",
+            return {"success": False,
                     "message": "Error while retrieving active tasks for user"}, 400
 
 
 def get_all_tasks_and_calculate_productivity(data_json):
     if not data_json:
-        return {"status": "fail", "message": "No data provided."}
+        return {"success": False, "message": "No data provided."}
     else:
         try:
             if data_json['username']:
@@ -158,22 +158,22 @@ def get_all_tasks_and_calculate_productivity(data_json):
                                 if not task["is_active"]:
                                     finished_tasks.append(task)
                                     sum_of_productive_time += task["duration"]
-                            return {"status": "success",
+                            return {"success": True,
                                     "productive_time": sum_of_productive_time,
                                     "user": found_user_json}, 200
                         else:
-                            return {"status": "success",
+                            return {"success": True,
                                     "message": "There are no finished tasks"}, 200
                 else:
-                    return {"status": "fail",
+                    return {"success": False,
                             "message": f"User - {data_json['username']}"
                                        f" - has not been registered yet."}, 400
             else:
-                return {"status": "fail",
+                return {"success": False,
                         "message": "No data username provided."}, 400
         except ValueError as e:
-            return {"status": "fail",
-                    "message": "Error while trying to retrieve productivity"}
+            return {"success": False,
+                    "message": "Error while trying to retrieve productivity"}, 400
 
 
 

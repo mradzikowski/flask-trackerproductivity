@@ -10,7 +10,7 @@ def create_task():
         body, status = task_service.create_task(data_json)
         return jsonify(body), status
     except ValueError as e:
-        return {"status": "fail", "message": "Error while creating object."}
+        return {"success": False, "message": "Error while creating object."}
 
 
 @bp.route('/task', methods=['GET'])
@@ -20,7 +20,7 @@ def get_task():
         body, status = task_service.get_task(data_json)
         return jsonify(body), status
     except ValueError as e:
-        return {"status": "fail", "message": "Error while retrieving task from database."}
+        return {"success": False, "message": "Error while retrieving task from database."}
 
 
 @bp.route('/task', methods=['DELETE'])
@@ -30,7 +30,7 @@ def delete_task():
         body, status = task_service.delete_task(data_json)
         return jsonify(body), status
     except ValueError as e:
-        return {"status": "fail",
+        return {"success": False,
                 "message": "Error while deleting task object from database."}
 
 
@@ -41,5 +41,5 @@ def finish_task():
         body, status = task_service.finish_task(data_json)
         return jsonify(body), status
     except ValueError as e:
-        return {"status": "fail",
+        return {"success": False,
                 "message": "Error while finishing the task"}

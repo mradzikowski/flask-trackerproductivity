@@ -6,20 +6,20 @@ from backend.extensions import db
 
 def get_user(data_json):
     if not data_json:
-        return {"status": "fail", "message": "No data provided."}
+        return {"success": False, "message": "No data provided."}
     if not data_json['username']:
-        return {"status": "fail", "message": "No username provided."}
+        return {"success": False, "message": "No username provided."}
     username = data_json['username']
     return User.query.filter_by(username=username).first()
 
 
 def create_task(data_json):
     if not data_json:
-        return {"status": "fail", "message": "No data provided."}
+        return {"success": False, "message": "No data provided."}
     condition_for_task = (data_json['task_id'] and
                           data_json['task_name'] and data_json['username'])
     if not condition_for_task:
-        return {"status": "fail", "message": "Data does not meet condition for user."}
+        return {"success": False, "message": "Data does not meet condition for user."}
     try:
         data = task_schema.load(data_json)
         new_task = Task(**data)
@@ -35,30 +35,30 @@ def create_task(data_json):
 
         return_json = task_schema.dump(data_json)
 
-        return {"status": "success", "message": return_json}, 201
+        return {"success": True, "message": return_json}, 201
     except KeyError as e:
-        return {"status": "fail", "message": "Error while creating object"}
+        return {"success": False, "message": "Error while creating object"}
 
 
 def get_task(data_json):
     if not data_json:
-        return {"status": "fail", "message": "No data provided."}, 400
+        return {"success": False, "message": "No data provided."}, 400
     else:
         if data_json['task_id']:
             found_task = Task.query.get(data_json['task_id'])
             if found_task:
                 registered_task = task_schema.dump(found_task)
-                return {"status": "success", "task": registered_task}, 200
+                return {"success": True, "task": registered_task}, 200
             else:
-                return {"status": "fail", "message": "Task has not been registered yet."}, 400
+                return {"success": False, "message": "Task has not been registered yet."}, 400
         else:
-            return {"status": "fail",
+            return {"success": False,
                     "message": f"Task - {data_json['task_id']} - data has not got specified task_id"}, 400
 
 
 def delete_task(data_json):
     if not data_json:
-        return {"status": "fail", "message": "No data provided."}, 400
+        return {"success": False, "message": "No data provided."}, 400
     else:
         try:
             if data_json['task_id']:
@@ -66,19 +66,19 @@ def delete_task(data_json):
                 if found_task is not None:
                     db.session.delete(found_task)
                     db.session.commit()
-                    return {"status": "success", "task": task_schema.dump(found_task),
+                    return {"success": True, "task": task_schema.dump(found_task),
                             "message": "Tak has been deleted."}, 200
                 else:
-                    return {"status": "fail", "message": "No registered task to delete."}, 400
+                    return {"success": False, "message": "No registered task to delete."}, 400
             else:
-                return {"status": "fail", "message": "There is no identifier."}
+                return {"success": False, "message": "There is no identifier."}
         except KeyError as e:
-            return {"status": "fail", "message": "Error while deleting and object"}, 400
+            return {"success": False, "message": "Error while deleting and object"}, 400
 
 
 def finish_task(data_json):
     if not data_json:
-        return {"status": "fail", "message": "No data provided."}, 400
+        return {"success": False, "message": "No data provided."}, 400
     else:
         try:
             if data_json['task_id']:
@@ -91,14 +91,14 @@ def finish_task(data_json):
                         duration_rounded_two_places = round(duration[0] / 60, 2)
                         found_task.duration = duration_rounded_two_places
                         db.session.commit()
-                        return {"status": "success", "task": task_schema.dump(found_task)}, 200
+                        return {"success": True, "task": task_schema.dump(found_task)}, 200
                     else:
-                        return {"status": "fail", "message": "Task has been already finished"}, 400
+                        return {"success": False, "message": "Task has been already finished"}, 400
                 else:
-                    return {"status": "fail", "message": "No registered task to delete."}, 400
+                    return {"success": False, "message": "No registered task to delete."}, 400
             else:
-                return {"status": "fail", "message": "There is no identifier."}, 400
+                return {"success": False, "message": "There is no identifier."}, 400
         except KeyError as e:
-            return {"status": "fail", "message": "Error while deleting and object"}, 400
+            return {"success": False, "message": "Error while deleting and object"}, 400
 
 
