@@ -52,4 +52,16 @@ def get_all_tasks():
         body, status = task_service.get_all_tasks()
         return jsonify(body), status
     except ValueError as e:
-        return {"success": False, "message": "Error while retrieving all tasks"}
+        return {"success": False,
+                "message": "Error while retrieving all tasks"}
+
+
+@bp.route('/task/user/week', methods=['GET'])
+def get_tasks_from_last_week():
+    try:
+        data = request.json
+        body, status = task_service.get_tasks_from_last_week(data)
+        return jsonify(body), status
+    except ValueError as e:
+        return {"success": False,
+                "message": "Error while retrieving recent tasks"}
