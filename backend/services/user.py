@@ -1,6 +1,7 @@
 from backend.models.user import user_schema, User
 from backend.extensions import db
 from datetime import datetime
+import re
 
 
 def create_user(data_json):
@@ -16,6 +17,9 @@ def create_user(data_json):
                 "message": "Email is used in this service."}, 400
 
     data = user_schema.load(data_json)
+    regex = "(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
+    if not re.search(regex, data['email']):
+        return {"success": False, "message": "Invalid format of email"}
     new_user = User(**data)
     new_user.registered = datetime.now()
     db.session.add(new_user)
