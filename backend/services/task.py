@@ -1,6 +1,6 @@
 from backend.models.task import task_schema, tasks_schema, Task
 from backend.models.user import User
-from datetime import datetime
+from datetime import datetime, timedelta
 from backend.extensions import db
 
 
@@ -118,3 +118,29 @@ def get_all_tasks():
     data_json = tasks_schema.dump(data)
     return {"success": True, "data": data_json}, 200
 
+
+def get_tasks_from_last_week(data_json):
+    if not data_json:
+        return {"success": False, "message": "No data provided."}, 400
+    try:
+        if data_json['username']:
+            found_user = User.query.get(data_json['username'])
+            if found_user is not None:
+                time_diff = datetime.today() - timedelta(days=7)
+                tasks_user = found_user.tasks
+                tasks_last_week = []
+                for task in tasks_user:
+                    if task.date_created >= time_diff:
+                        tasks_last_week.append(task)
+                return {"success": True,
+                        "message": tasks_schema.dump(tasks_last_week)}, 200
+            else:
+                return {"success": False,
+                        "message": "No registered task to delete."}, 400
+        else:
+            return {"success": False,
+                    "message": f"User - {data_json['username']}"
+                               f" - has not been registered yet."}, 400
+    except ValueError as e:
+        return {"success": False,
+                "message": "Error while retrieving recent tasks"}, 400
