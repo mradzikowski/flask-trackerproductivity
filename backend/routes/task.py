@@ -44,3 +44,12 @@ def finish_task():
     except ValueError as e:
         return {"success": False,
                 "message": "Error while finishing the task"}
+
+
+@bp.route('/task/get/all', methods=['GET'])
+def get_all_tasks():
+    try:
+        body, status = task_service.get_all_tasks()
+        return jsonify(body), status
+    except ValueError as e:
+        return {"success": False, "message": "Error while retrieving all tasks"}
