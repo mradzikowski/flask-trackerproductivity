@@ -1,5 +1,5 @@
-from backend.extensions import db
 from datetime import datetime
+from backend.extensions import db
 from marshmallow import Schema, fields
 
 

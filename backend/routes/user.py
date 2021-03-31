@@ -1,6 +1,6 @@
 from flask import request, jsonify
-from . import bp
 import backend.services.user as user_services
+from . import bp
 
 
 @bp.route('/user', methods=['POST'])

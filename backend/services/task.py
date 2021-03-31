@@ -1,6 +1,6 @@
+from datetime import datetime, timedelta
 from backend.models.task import task_schema, tasks_schema, Task
 from backend.models.user import User
-from datetime import datetime, timedelta
 from backend.extensions import db
 
 
@@ -44,73 +44,70 @@ def create_task(data_json):
 def get_task(data_json):
     if not data_json:
         return {"success": False, "message": "No data provided."}, 400
-    else:
-        if data_json['task_id']:
-            found_task = Task.query.get(data_json['task_id'])
-            if found_task:
-                registered_task = task_schema.dump(found_task)
-                return {"success": True, "task": registered_task}, 200
-            else:
-                return {"success": False,
-                        "message": "Task has not been registered yet."}, 400
+    if data_json['task_id']:
+        found_task = Task.query.get(data_json['task_id'])
+        if found_task:
+            registered_task = task_schema.dump(found_task)
+            return {"success": True, "task": registered_task}, 200
         else:
             return {"success": False,
-                    "message": f"Task - {data_json['task_id']} - "
-                               f"data has not got specified task_id"}, 400
+                    "message": "Task has not been registered yet."}, 400
+    else:
+        return {"success": False,
+                "message": f"Task - {data_json['task_id']} - "
+                           f"data has not got specified task_id"}, 400
 
 
 def delete_task(data_json):
     if not data_json:
         return {"success": False, "message": "No data provided."}, 400
-    else:
-        try:
-            if data_json['task_id']:
-                found_task = Task.query.get(data_json['task_id'])
-                if found_task is not None:
-                    db.session.delete(found_task)
-                    db.session.commit()
-                    return {"success": True,
-                            "task": task_schema.dump(found_task),
-                            "message": "Tak has been deleted."}, 200
-                else:
-                    return {"success": False,
-                            "message": "No registered task to delete."}, 400
+    try:
+        if data_json['task_id']:
+            found_task = Task.query.get(data_json['task_id'])
+            if found_task is not None:
+                db.session.delete(found_task)
+                db.session.commit()
+                return {"success": True,
+                        "task": task_schema.dump(found_task),
+                        "message": "Tak has been deleted."}, 200
             else:
-                return {"success": False, "message": "There is no identifier."}
-        except KeyError as e:
-            return {"success": False,
-                    "message": "Error while deleting and object"}, 400
+                return {"success": False,
+                        "message": "No registered task to delete."}, 400
+        else:
+            return {"success": False, "message": "There is no identifier."}
+    except KeyError as e:
+        return {"success": False,
+                "message": "Error while deleting and object"}, 400
 
 
 def finish_task(data_json):
     if not data_json:
         return {"success": False, "message": "No data provided."}, 400
-    else:
-        try:
-            if data_json['task_id']:
-                found_task = Task.query.get(data_json['task_id'])
-                if found_task is not None:
-                    if found_task.is_active:
-                        found_task.is_active = False
-                        duration = datetime.now() - found_task.date_created
-                        duration = divmod(duration.total_seconds(), 60)
-                        duration_rounded_two_places = round(duration[0] / 60, 2)
-                        found_task.duration = duration_rounded_two_places
-                        db.session.commit()
-                        return {"success": True,
-                                "task": task_schema.dump(found_task)}, 200
-                    else:
-                        return {"success": False,
-                                "message": "Task has been already finished"}, 400
+    try:
+        if data_json['task_id']:
+            found_task = Task.query.get(data_json['task_id'])
+            if found_task is not None:
+                if found_task.is_active:
+                    found_task.is_active = False
+                    duration = datetime.now() - found_task.date_created
+                    duration = divmod(duration.total_seconds(), 60)
+                    duration_rounded_two_places = round(duration[0] / 60, 2)
+                    found_task.duration = duration_rounded_two_places
+                    db.session.commit()
+                    return {"success": True,
+                            "task": task_schema.dump(found_task)}, 200
                 else:
                     return {"success": False,
-                            "message": "No registered task to delete."}, 400
+                            "message": "Task has been already finished"}, 400
             else:
                 return {"success": False,
-                        "message": "There is no identifier."}, 400
-        except KeyError as e:
+                        "message": "No registered task to delete."}, 400
+        else:
             return {"success": False,
-                    "message": "Error while deleting and object"}, 400
+                    "message": "There is no identifier."}, 400
+    except KeyError as e:
+        return {"success": False,
+                "message": "Error while deleting and object"}, 400
 
 
 def get_all_tasks():

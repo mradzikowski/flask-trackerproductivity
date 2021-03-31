@@ -1,7 +1,7 @@
-from backend.extensions import db
-from .task import Task, TaskSchema
-from marshmallow import Schema, fields
 from datetime import date
+from backend.extensions import db
+from marshmallow import Schema, fields
+from .task import TaskSchema
 
 
 class User(db.Model):

@@ -1,6 +1,6 @@
 from flask import request, jsonify
-from . import bp
 import backend.services.task as task_service
+from . import bp
 
 
 @bp.route('/task', methods=['POST'])
