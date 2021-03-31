@@ -1,4 +1,4 @@
-from backend.models.user import user_schema, User
+from backend.models.user import user_schema, User, users_schema
 from backend.extensions import db
 from datetime import datetime
 import re
@@ -180,5 +180,10 @@ def get_all_tasks_and_calculate_productivity(data_json):
             return {"success": False,
                     "message": "Error while trying to retrieve productivity"}, 400
 
+
+def get_all_users():
+    data = User.query.all()
+    data_json = users_schema.dump(data)
+    return {"success": "True", "data": data_json}, 200
 
 
