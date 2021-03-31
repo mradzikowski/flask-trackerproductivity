@@ -65,3 +65,13 @@ def get_productivity_for_user():
         return {"success": False,
                 "message": "Error while getting productive hours"}
 
+
+@bp.route('/user/get/all', methods=['GET'])
+def get_all_users():
+    try:
+        body, status = user_services.get_all_users()
+        return jsonify(body), status
+    except ValueError as e:
+        return {"success": False,
+                "message": "Error while retrieving all users"}
+
