@@ -19,7 +19,8 @@ def create_task(data_json):
     condition_for_task = (data_json['task_id'] and
                           data_json['task_name'] and data_json['username'])
     if not condition_for_task:
-        return {"success": False, "message": "Data does not meet condition for user."}
+        return {"success": False,
+                "message": "Data does not meet condition for user."}
     try:
         data = task_schema.load(data_json)
         new_task = Task(**data)
@@ -50,10 +51,12 @@ def get_task(data_json):
                 registered_task = task_schema.dump(found_task)
                 return {"success": True, "task": registered_task}, 200
             else:
-                return {"success": False, "message": "Task has not been registered yet."}, 400
+                return {"success": False,
+                        "message": "Task has not been registered yet."}, 400
         else:
             return {"success": False,
-                    "message": f"Task - {data_json['task_id']} - data has not got specified task_id"}, 400
+                    "message": f"Task - {data_json['task_id']} - "
+                               f"data has not got specified task_id"}, 400
 
 
 def delete_task(data_json):
@@ -66,14 +69,17 @@ def delete_task(data_json):
                 if found_task is not None:
                     db.session.delete(found_task)
                     db.session.commit()
-                    return {"success": True, "task": task_schema.dump(found_task),
+                    return {"success": True,
+                            "task": task_schema.dump(found_task),
                             "message": "Tak has been deleted."}, 200
                 else:
-                    return {"success": False, "message": "No registered task to delete."}, 400
+                    return {"success": False,
+                            "message": "No registered task to delete."}, 400
             else:
                 return {"success": False, "message": "There is no identifier."}
         except KeyError as e:
-            return {"success": False, "message": "Error while deleting and object"}, 400
+            return {"success": False,
+                    "message": "Error while deleting and object"}, 400
 
 
 def finish_task(data_json):
@@ -91,14 +97,19 @@ def finish_task(data_json):
                         duration_rounded_two_places = round(duration[0] / 60, 2)
                         found_task.duration = duration_rounded_two_places
                         db.session.commit()
-                        return {"success": True, "task": task_schema.dump(found_task)}, 200
+                        return {"success": True,
+                                "task": task_schema.dump(found_task)}, 200
                     else:
-                        return {"success": False, "message": "Task has been already finished"}, 400
+                        return {"success": False,
+                                "message": "Task has been already finished"}, 400
                 else:
-                    return {"success": False, "message": "No registered task to delete."}, 400
+                    return {"success": False,
+                            "message": "No registered task to delete."}, 400
             else:
-                return {"success": False, "message": "There is no identifier."}, 400
+                return {"success": False,
+                        "message": "There is no identifier."}, 400
         except KeyError as e:
-            return {"success": False, "message": "Error while deleting and object"}, 400
+            return {"success": False,
+                    "message": "Error while deleting and object"}, 400
 
 

@@ -14,10 +14,12 @@ class Task(db.Model):
                              default=datetime.utcnow)
     duration = db.Column(db.Float, default=0.0)
 
-    username = db.Column(db.String, db.ForeignKey('users.username'), nullable=False)
+    username = db.Column(db.String,
+                         db.ForeignKey('users.username'), nullable=False)
 
     def __repr__(self):
-        return "<Task(task_id='%s', task_name='%s', description='%s', is_active='%s')>" \
+        return "<Task(task_id='%s'," \
+               " task_name='%s', description='%s', is_active='%s')>" \
                % (self.id, self.task_name, self.description, self.is_active)
 
 

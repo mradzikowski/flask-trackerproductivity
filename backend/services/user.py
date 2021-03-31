@@ -78,7 +78,8 @@ def delete_user(data_json):
                 return {"success": False,
                         "message": "There is no such a user with this username"}, 400
         except ValueError as e:
-            return {"success": False, "message": "Error while deleting the object"}, 400
+            return {"success": False,
+                    "message": "Error while deleting the object"}, 400
 
 
 def get_all_tasks_for_user(data_json):
