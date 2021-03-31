@@ -1,4 +1,4 @@
-from backend.models.task import task_schema, Task
+from backend.models.task import task_schema, tasks_schema, Task
 from backend.models.user import User
 from datetime import datetime
 from backend.extensions import db
@@ -112,4 +112,9 @@ def finish_task(data_json):
             return {"success": False,
                     "message": "Error while deleting and object"}, 400
 
+
+def get_all_tasks():
+    data = Task.query.all()
+    data_json = tasks_schema.dump(data)
+    return {"success": True, "data": data_json}, 200
 
