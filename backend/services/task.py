@@ -15,12 +15,12 @@ def get_user(data_json):
 
 def create_task(data_json):
     if not data_json:
-        return {"success": False, "message": "No data provided."}
+        return {"success": False, "message": "No data provided."}, 400
     condition_for_task = (data_json['task_id'] and
                           data_json['task_name'] and data_json['username'])
     if not condition_for_task:
         return {"success": False,
-                "message": "Data does not meet condition for user."}
+                "message": "Data does not meet condition for user."}, 400
     try:
         data = task_schema.load(data_json)
         new_task = Task(**data)
@@ -38,7 +38,7 @@ def create_task(data_json):
 
         return {"success": True, "message": return_json}, 201
     except KeyError as e:
-        return {"success": False, "message": "Error while creating object"}
+        return {"success": False, "message": "Error while creating object"}, 400
 
 
 def get_task(data_json):
