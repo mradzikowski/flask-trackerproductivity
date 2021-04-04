@@ -118,6 +118,8 @@ def get_all_active_tasks_for_user(data_json):
                             active_tasks.append(task)
                     if len(active_tasks) > 0:
                         return {"success": True, "tasks": active_tasks}, 200
+                    else:
+                        return {"success": True, "tasks": "No tasks active"}, 200
                 else:
                     return {"success": False,
                             "message": "No tasks attached to this user."}, 400
