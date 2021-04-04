@@ -293,7 +293,7 @@ GET ALL USERS
 '/user/get/all'
 
 
-##TODO
+## TODO
 - [] create unit tests for setup and methods
 - [] deploy restapi using docker/heroku
 - [] write more methods for statistics
