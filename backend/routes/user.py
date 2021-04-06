@@ -1,5 +1,7 @@
-from flask import request, jsonify
+from flask import jsonify, request
+
 import backend.services.user as user_services
+
 from . import bp
 
 

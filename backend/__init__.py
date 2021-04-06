@@ -1,6 +1,8 @@
-from flask import Flask
-from .extensions import db, ma
 import os
+
+from flask import Flask
+
+from .extensions import db, ma
 from .models.task import Task
 
 

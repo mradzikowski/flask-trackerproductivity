@@ -1,6 +1,9 @@
 from datetime import date
-from backend.extensions import db
+
 from marshmallow import Schema, fields
+
+from backend.extensions import db
+
 from .task import TaskSchema
 
 

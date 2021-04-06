@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta
-from backend.models.task import task_schema, tasks_schema, Task
-from backend.models.user import User
+
 from backend.extensions import db
+from backend.models.task import Task, task_schema, tasks_schema
+from backend.models.user import User
 
 
 def get_user(data_json):

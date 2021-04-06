@@ -1,7 +1,8 @@
-from datetime import datetime
 import re
-from backend.models.user import user_schema, User, users_schema
+from datetime import datetime
+
 from backend.extensions import db
+from backend.models.user import User, user_schema, users_schema
 
 
 def create_user(data_json):

@@ -1,6 +1,8 @@
 from datetime import datetime
-from backend.extensions import db
+
 from marshmallow import Schema, fields
+
+from backend.extensions import db
 
 
 class Task(db.Model):

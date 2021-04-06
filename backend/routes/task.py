@@ -1,5 +1,7 @@
-from flask import request, jsonify
+from flask import jsonify, request
+
 import backend.services.task as task_service
+
 from . import bp
 
 
